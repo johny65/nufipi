@@ -1,5 +1,7 @@
 #!/bin/env python3
 
+# Nufipi - Numerical File Picker
+
 import os
 import pathlib
 import subprocess
