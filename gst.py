@@ -17,27 +17,45 @@ def print_status(st):
 
 def parse_input(input_string):
     if not input_string.replace(" ", "").replace("-", "").isnumeric():
-        raise Exception("Cadena inválida.")
-    idx = []
+        raise Exception("Invalid input.")
+    idx = set()
     for t in input_string.split():
         if "-" in t:
             tt = t.split("-")
             if len(tt) != 2 or not tt[0] or not tt[1]:
-                raise Exception("Cadena inválida.")
-            idx.append(tt[0])
-            idx.append(tt[1])
+                raise Exception("Invalid input.")
+            a, b = int(tt[0]), int(tt[1])
+            a, b = (a, b) if a < b else (b, a)
+            idx.update(range(a, b+1))
         else:
-            idx.append(t)
+            idx.add(int(t))
+    # return sorted(list(idx))
     return idx
+
+def parse_status(st, idx):
+    if max(idx) > len(st) - 1:
+        raise Exception("Invalid input.")
+    files = [parse_status_line(st[i]) for i in idx]
+    return files
+
+def parse_status_line(line):
+    line = line[3:]
+    return line[1:-1] if line.startswith('"') and line.endswith('"') else line
+
 
 if __name__ == "__main__":
     st = get_status()
     if len(sys.argv) == 1:
         print_status(st)
     else:
-        print("Seleccione los archivos:")
+        print("Select files:")
         print_status(st)
-        ops = input("Ingrese:")
+        ops = input("Enter: ")
+        ops = parse_input(ops)
 
-        print(parse_input(ops))
+        files = parse_status(st, ops)
+        cmd = ["git"] + sys.argv[1:] + files
+        # cmd = "git {} -- {}".format(" ".join(sys.argv[1:]), " ".join(files))
+
+        subprocess.run(cmd)
     # print(os.getcwd())
