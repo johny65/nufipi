@@ -7,6 +7,12 @@ import pathlib
 import subprocess
 import sys
 
+
+class InvalidInput(Exception):
+    def __init__(self):
+        super().__init__("Invalid input.")
+
+
 class Parser:
     def __init__(self):
         self.st = self.get_status()
@@ -30,13 +36,13 @@ class Parser:
 
     def parse_input(self, input_string):
         if not input_string.replace(" ", "").replace("-", "").isnumeric():
-            raise Exception("Invalid input.")
+            raise InvalidInput
         idx = set()
         for t in input_string.split():
             if "-" in t:
                 tt = t.split("-")
                 if len(tt) != 2 or not tt[0] or not tt[1]:
-                    raise Exception("Invalid input.")
+                    raise InvalidInput
                 a, b = int(tt[0]), int(tt[1])
                 a, b = (a, b) if a < b else (b, a)
                 idx.update(range(a, b+1))
@@ -47,8 +53,8 @@ class Parser:
 
     def parse_status(self, idx):
         if max(idx) > len(self.st) - 1:
-            raise Exception("Invalid input.")
         files = [self.parse_status_line(self.st[i]) for i in idx]
+            raise InvalidInput
         return files
 
     def parse_status_line(self, line):
