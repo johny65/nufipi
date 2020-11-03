@@ -53,8 +53,8 @@ class Parser:
 
     def parse_status(self, idx):
         if max(idx) > len(self.st) - 1:
-        files = [self.parse_status_line(self.st[i]) for i in idx]
             raise InvalidInput
+        files = [self.parse_status_line(self.st[i]) for i in idx]
         return files
 
     def parse_status_line(self, line):
