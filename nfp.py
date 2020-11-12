@@ -88,14 +88,33 @@ class LsParser(Parser):
         return []
 
 
-if __name__ == "__main__":
-    p = LsParser()
-    if len(sys.argv) == 1:
-        p.print_status()
+def get_parser():
+    parser_type = LsParser # default parser
+    argc = len(sys.argv)
+    if argc == 1:
+        args = []
+    elif sys.argv[1] == "--parser":
+        if argc < 3:
+            exit("Parser not specified.")
+        chosen_parser = sys.argv[2]
+        if chosen_parser == "ls":
+            parser_type = LsParser
+        elif chosen_parser == "git":
+            parser_type = GitParser
+        else:
+            exit("Invalid parser.")
+        args = sys.argv[3:]
     else:
-        print("Select files:")
-        p.print_status()
-        ops = input("Enter: ")
-        p.execute(sys.argv[1:], ops)
+        args = sys.argv[1:]
+    return parser_type(), args
 
-    # print(os.getcwd())
+
+if __name__ == "__main__":
+    parser, args = get_parser()
+    if args:
+        print("Select files:")
+        parser.print_status()
+        ops = input("Enter: ")
+        parser.execute(args, ops)
+    else:
+        parser.print_status()
